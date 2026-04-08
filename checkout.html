@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - SmartCart AI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo"><a href="index.html" style="color:white;text-decoration:none;">SmartCart AI</a></div>
+    <div id="auth-container"></div>
+  </header>
+
+  <main class="container checkout-container" style="display:flex;gap:40px;margin-top:30px;">
+    <!-- Form Side -->
+    <div style="flex:2;">
+      <h2>Billing Details</h2>
+      <form id="checkout-form" style="display:flex;flex-direction:column;gap:15px;" onsubmit="handleCheckout(event)">
+        <input type="text" placeholder="Full Name" required style="padding:10px;border:1px solid #ccc;border-radius:4px;">
+        <input type="email" placeholder="Email Address" required style="padding:10px;border:1px solid #ccc;border-radius:4px;">
+        <textarea placeholder="Shipping Address" rows="4" required style="padding:10px;border:1px solid #ccc;border-radius:4px;"></textarea>
+        
+        <h3>Payment Info (Mock)</h3>
+        <input type="text" placeholder="Card Number (16 digits)" pattern="\d{16}" required style="padding:10px;border:1px solid #ccc;border-radius:4px;">
+        <div style="display:flex;gap:10px;">
+          <input type="text" placeholder="MM/YY" pattern="\d{2}/\d{2}" required style="padding:10px;border:1px solid #ccc;flex:1;">
+          <input type="text" placeholder="CVC" pattern="\d{3}" required style="padding:10px;border:1px solid #ccc;flex:1;">
+        </div>
+        
+        <button type="submit" class="btn" style="margin-top:20px;padding:15px;background:var(--primary-color);">Place Order</button>
+      </form>
+    </div>
+
+    <!-- Summary Side -->
+    <div style="flex:1;background:#f9f9f9;padding:20px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+      <h2>Order Summary</h2>
+      <div id="checkout-summary-items" style="margin-bottom:20px;border-bottom:1px solid #ddd;padding-bottom:10px;"></div>
+      
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+        <span>Subtotal:</span>
+        <span id="checkout-subtotal">$0.00</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+        <span>Tax (8%):</span>
+        <span id="checkout-tax">$0.00</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;border-bottom:1px solid #ddd;padding-bottom:10px;">
+        <span>Shipping:</span>
+        <span id="checkout-shipping">$0.00</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:1.2rem;font-weight:bold;">
+        <span>Total:</span>
+        <span id="checkout-total">$0.00</span>
+      </div>
+    </div>
+  </main>
+
+  <script src="cart.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const items = window.getCartItems();
+      const container = document.getElementById("checkout-summary-items");
+      
+      if(items.length === 0) {
+        container.innerHTML = "<p>Your cart is empty. <a href='index.html'>Go shopping!</a></p>";
+      } else {
+        items.forEach(i => {
+          container.innerHTML += `<div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+            <span>${i.title.slice(0, 20)}... x ${i.quantity}</span>
+            <span>$${(i.price * i.quantity).toFixed(2)}</span>
+          </div>`;
+        });
+      }
+
+      document.getElementById("checkout-subtotal").textContent = `$${window.getCartSubtotal().toFixed(2)}`;
+      document.getElementById("checkout-tax").textContent = `$${window.getCartTax().toFixed(2)}`;
+      document.getElementById("checkout-shipping").textContent = `$${window.getCartShipping().toFixed(2)}`;
+      document.getElementById("checkout-total").textContent = `$${window.getCartTotal().toFixed(2)}`;
+    });
+
+    function handleCheckout(e) {
+      e.preventDefault();
+      if(window.getCartItems().length === 0) {
+        alert("Cannot place empty order.");
+        return;
+      }
+      alert("Order placed successfully! Thank you for purchasing.");
+      window.clearCart();
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
