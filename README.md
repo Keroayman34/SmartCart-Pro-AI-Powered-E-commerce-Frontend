@@ -132,7 +132,7 @@ live-server
 
 ## 👨‍💻 Author
 
-Developed by [Your Name]
+Developed by Kerollos Ayman
 
 ---
 
